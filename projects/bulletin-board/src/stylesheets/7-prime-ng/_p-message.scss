@@ -1,0 +1,7 @@
+p-message {
+  .p-inline-message {
+    .p-inline-message-text::first-letter {
+      text-transform: uppercase;
+    }
+  }
+}

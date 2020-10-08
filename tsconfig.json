@@ -6,5 +6,15 @@
 */
 {
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./projects/bulletin-board/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/bulletin-board/tsconfig.spec.json"
+    }
+    // ,{
+    //   "path": "./tsconfig.jest.json"
+    // }
+  ]
 }

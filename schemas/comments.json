@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "Comment",
+  "title": "Comments Schema",
+  "description": "Validate incoming comments data",
+  "type": "object",
+  "definitions": {
+    "Timestamp": {}
+  },
+  "properties": {
+    "userId": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "isDeleted": { "type": "boolean" },
+    "isVisible": { "type": "boolean" },
+    "createdAt": { "$ref": "#/definitions/Timestamp" },
+    "updatedAt": { "$ref": "#/definitions/Timestamp" }
+  },
+  "required": [
+    "content",
+    "userId",
+    "isDeleted",
+    "isVisible",
+    "createdAt",
+    "updatedAt"
+  ]
+}

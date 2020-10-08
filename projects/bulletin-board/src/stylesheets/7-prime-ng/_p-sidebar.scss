@@ -1,0 +1,15 @@
+p-sidebar.overflow-auto {
+  > .p-sidebar {
+    overflow: auto;
+  }
+}
+
+p-sidebar.flex-column-reverse {
+  > .p-sidebar {
+    > .p-sidebar-content {
+      padding-top: calc(32px + 0.5rem);
+      display: flex;
+      flex-direction: column-reverse;
+    }
+  }
+}

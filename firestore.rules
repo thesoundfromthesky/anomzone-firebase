@@ -1,0 +1,258 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // This rule allows anyone with your database reference to view, edit,
+    // and delete all data in your Firestore database. It is useful for getting
+    // started, but it is configured to expire after 30 days because it
+    // leaves your app open to attackers. At that time, all client
+    // requests to your Firestore database will be denied.
+    //
+    // Make sure to write security rules for your app before that time, or else
+    // all client requests to your Firestore database will be denied until you Update
+    // your rules
+    match /{document=**} {
+      // allow read, write: if request.time < timestamp.date(2020, 9, 20);
+      allow read, write: if false;
+    }
+
+    match /rootPosts/{posts}/posts/{id} {
+        allow create: if isCollectionAllowed(posts) && canRead() && canWrite("Post");
+        allow update: if isCollectionAllowed(posts) && canRead() && canWrite("Post") && rateLimit(3) && isUnchanged(["userId","createdAt"]);
+        allow delete: if false;
+
+        allow get: if canRead();
+        allow list: if canRead() && orderBy("createdAt", "DESC") && limit(10);
+      }
+
+    match /rootPosts/{posts}/posts/{path=**}/comments/{id}{
+        allow create: if isCollectionAllowed(posts) && canRead() && canWrite("Comment");
+        allow update: if isCollectionAllowed(posts) && canRead() && canWrite("Comment") && isVisible() && rateLimit(3) && isUnchanged(["userId","createdAt", "isDeleted"]);
+        allow delete: if false;
+
+        allow get: if canRead();
+        allow list: if canRead() && orderBy("createdAt", "ASC") && limit(5);
+     }
+  }
+}
+
+function isCollectionAllowed(name){
+  return isPlanets(name) || isFoods(name) || isSports(name) || isCountries(name) || isNames(name);
+}
+
+function isPlanets(name){
+  return name in [
+      'posts',
+      'mercury',
+      'venus',
+      'earth',
+      'mars',
+      'jupiter',
+      'saturn',
+      'uranus',
+      'neptune',
+      'ceres',
+      'pluto',
+      'haumea',
+      'makemake',
+      'eris',
+      'sun',
+      'moon',
+      'comets',
+      'asteroids',
+      'asteroid belt',
+    ];
+}
+
+function isFoods(name){
+  return name in [
+      'melon',
+      'banana',
+      'tomato',
+      'apple',
+      'potato',
+      'watermelon',
+      'cucumber',
+      'beans',
+      'cabbage',
+      'broccoli',
+      'carrot',
+      'asparagus',
+      'cauliflower',
+      'corn',
+      'lettuce',
+      'mushrooms',
+      'onion',
+      'pumpkin',
+    ];
+}
+
+function isSports(name){
+  return name in [
+      'kickball',
+      'boxing',
+      'marathon',
+      'judo',
+      'fencing',
+      'cycling',
+      'boxing',
+      'sumo',
+      'sprint',
+      'walking',
+      'baseball',
+      'basketball',
+      'lacrosse',
+      'squash',
+      'softball',
+      'polo',
+      'paddle',
+      'hurling',
+      'volleyball',
+    ];
+}
+
+function isCountries(name){
+  return name in [
+      'lebanon',
+      'angola',
+      'reunion',
+      'morocco',
+      'ecuador',
+      'portugal',
+      'japan',
+      'malta',
+      'maldives',
+      'burundi',
+      'kiribati',
+      'iraq',
+      'madagascar',
+      'qatar',
+      'netherlands',
+      'israel',
+      'montserrat',
+      'egypt',
+      'niue',
+      'togo',
+      'zambia',
+      'lithuania',
+      'bhutan',
+      'vanuatu',
+      'luxembourg',
+      'qatar',
+      'indonesia',
+      'india',
+      'somalia',
+    ];
+}
+
+function isNames(name){
+  return name in  [
+      'shirlee',
+      'jackie',
+      'cherrita',
+      'dania',
+      'barbara',
+      'elsie',
+      'deirdre',
+      'brandise',
+      'demetris',
+      'janenna',
+      'tobe',
+      'jessy',
+      'corene',
+      'caritta',
+      'dagmar',
+      'molli',
+      'dagmar',
+      'alie',
+      'cathyleen',
+      'aili',
+      'dale',
+      'sherrie',
+      'sandie',
+      'dulcinea',
+      'selia',
+      'fernande',
+      'elyssa',
+      'grier',
+      'constance',
+      'damaris',
+      'kellen',
+      'nadine',
+      'viki',
+      'charmaine',
+      'cristabel',
+      'elyssa',
+      'darlleen',
+      'devina',
+      'jobi',
+    ];
+}
+
+function getIncomingData(){
+  return request.resource.data;
+}
+
+function getExistingData(){
+  return resource.data;
+}
+
+function isSignedIn(){
+  return request.auth != null;
+}
+
+function isCreating(){
+  return request.method == "create";
+}
+
+function getData(){
+  let data = isCreating() ? getIncomingData() : getExistingData();
+  return data;
+}
+
+function isOwner(){
+  return getData().userId == request.auth.uid;
+}
+
+function isTimestampValid(){
+  let data = getIncomingData();
+  let hasCreatedAt = data.createdAt == request.time;
+  let hasUpdatedAt = data.updatedAt == request.time;
+  return isCreating() ? hasCreatedAt && hasUpdatedAt : hasUpdatedAt; 
+}
+
+function isVisible(){
+  return getData().isVisible;
+}
+
+function isDeleted(){ 
+  return !getData().isDeleted;
+}
+
+function isUnchanged(keys){
+  return getIncomingData().diff(getExistingData()).unchangedKeys().hasAll(keys);
+}
+
+function limit(size){
+  return request.query.limit <= size;
+}
+
+function orderBy(field, direction){
+  return request.query.orderBy[field] == direction;
+}
+
+function rateLimit(sec){
+  return getExistingData().updatedAt + duration.value(sec, "s") < getIncomingData().updatedAt;
+}
+
+function canWrite(schema){
+  return isOwner() && isTimestampValid() && isValid(schema);
+}
+
+function canRead(){
+  return isSignedIn() && isDeleted();
+}
+
+// <svarog version="1.0.0">
+function _s0(d,s){return ((((((((d is map)&&d.keys().hasOnly(["userId","content","isDeleted","isVisible","createdAt","updatedAt"]))&&(((s==false)&&(d.keys().hasAll(["userId"])==false))||((d.userId is string)&&(d.userId.size()<=40))))&&(((s==false)&&(d.keys().hasAll(["content"])==false))||((d.content is string)&&(d.content.size()<=1024))))&&(((s==false)&&(d.keys().hasAll(["isDeleted"])==false))||(d.isDeleted is bool)))&&(((s==false)&&(d.keys().hasAll(["isVisible"])==false))||(d.isVisible is bool)))&&(((s==false)&&(d.keys().hasAll(["createdAt"])==false))||(d.createdAt is timestamp)))&&(((s==false)&&(d.keys().hasAll(["updatedAt"])==false))||(d.updatedAt is timestamp)))}function _s1(d,s){return ((((((((d is map)&&d.keys().hasOnly(["userId","title","content","isDeleted","createdAt","updatedAt"]))&&(((s==false)&&(d.keys().hasAll(["userId"])==false))||((d.userId is string)&&(d.userId.size()<=40))))&&(((s==false)&&(d.keys().hasAll(["title"])==false))||((d.title is string)&&(d.title.size()<=60))))&&(((s==false)&&(d.keys().hasAll(["content"])==false))||((d.content is string)&&(d.content.size()<=1024))))&&(((s==false)&&(d.keys().hasAll(["isDeleted"])==false))||(d.isDeleted is bool)))&&(((s==false)&&(d.keys().hasAll(["createdAt"])==false))||(d.createdAt is timestamp)))&&(((s==false)&&(d.keys().hasAll(["updatedAt"])==false))||(d.updatedAt is timestamp)))}function _s(n,d,s){return (((n=="Comment")&&_s0(d,s))||((n=="Post")&&_s1(d,s)))}function isValid(n){return _s(n,request.resource.data,(request.method=="create"))}
+// </svarog>

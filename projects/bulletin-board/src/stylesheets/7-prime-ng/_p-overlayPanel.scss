@@ -1,0 +1,12 @@
+.p-overlaypanel.profile {
+  max-width: 350px;
+  width: 100%;
+//   left: unset !important;
+//   transform: translate(-100%, 0px) !important;
+
+  &::before,
+  &::after {
+    left: unset;
+    right: 1.25rem;
+  }
+}

@@ -1,0 +1,19 @@
+<p-card class="half-wrapper card-login" header="Login">
+  <app-button
+    class="p-d-flex p-flex-column p-mb-2"
+    label="Enter as a guest"
+    icon="pi pi-user"
+    [loading]="true"
+    [isResponsive]="false"
+    [cb]="signInAnonymously.bind(this)"
+  >
+  </app-button>
+  <app-button
+    label="SignIn With Google"
+    icon="pi pi-google"
+    [loading]="true"
+    [isResponsive]="false"
+    [cb]="signInWithRedirectGoogle.bind(this)"
+  >
+  </app-button>
+</p-card>

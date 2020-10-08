@@ -1,0 +1,41 @@
+<ng-container *ngIf="post$ | async as post">
+  <ng-container *ngIf="{
+      valueChanges: valueChanges$ | async
+    } as data">
+    <p-card class="card-flex" header="Edit a post">
+      <form [formGroup]="postsForm" class="p-fluid p-input-filled p-d-flex p-flex-column flex-1">
+        <div class="p-field">
+          <label for="title" class="required">Title</label>
+          <input pInputText appControl [validators]="postsValidators" id="title" formControlName="title" />
+          <form-errors [form]="postsForm" control="title" [value]="getPostsFormValue('title')"></form-errors>
+        </div>
+        <div class="p-field p-d-flex p-flex-column flex-1">
+          <label class="required" for="content">Content</label>
+          <textarea rows="10" cols="30" [autoResize]="true" pInputTextarea appControl [validators]="postsValidators"
+            id="content" formControlName="content"></textarea>
+          <small id="content-help">{{
+            (getPostsFormValue("content")?.length || 0) +
+              " / " +
+              postsValidators.content.maxlength
+          }}</small>
+          <form-errors [form]="postsForm" control="content" [value]="getPostsFormValue('content')"></form-errors>
+        </div>
+      </form>
+
+      <p-footer class="p-jc-between">
+        <div>
+          <app-button styleClass="p-button-danger" label="Delete" icon="pi pi-times" [loading]="true"
+            [cb]="onDelete.bind(this)"></app-button>
+        </div>
+        <div>
+          <app-button styleClass="p-button-danger p-mr-2" label="Reset" icon="pi pi-refresh" [loading]="true"
+            [cb]="onReset.bind(this, post)"></app-button>
+          <app-button styleClass="p-button-success" label="Update" icon="pi pi-pencil" [delay]="true" [loading]="true"
+            [invalid]="postsForm.invalid" [isUnchanged]="isUnchanged" [cb]="onSubmit.bind(this)"></app-button>
+        </div>
+      </p-footer>
+    </p-card>
+  </ng-container>
+
+  <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+</ng-container>

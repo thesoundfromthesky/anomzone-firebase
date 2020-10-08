@@ -1,0 +1,9 @@
+p-progressBar.custom {
+  > .p-progressbar {
+    height: 6px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+}

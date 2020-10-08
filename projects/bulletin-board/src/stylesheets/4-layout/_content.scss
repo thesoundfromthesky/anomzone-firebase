@@ -1,0 +1,8 @@
+layout-content > router-outlet + * {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  @include wrapper();
+  @extend .full-height;
+}

@@ -1,0 +1,15 @@
+.position-absolute {
+  position: absolute;
+}
+
+.position-laptop-static {
+  @include media(laptop) {
+    position: static;
+  }
+}
+
+.position-laptop-absolute {
+  @include media(laptop) {
+    position: absolute;
+  }
+}

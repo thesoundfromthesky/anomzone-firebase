@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "Post",
+  "title": "Posts Schema",
+  "description": "Validate incoming posts data",
+  "type": "object",
+  "definitions": {
+    "Timestamp": {}
+  },
+  "properties": {
+    "userId": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 1024
+    },
+    "isDeleted": { "type": "boolean" },
+    "createdAt": { "$ref": "#/definitions/Timestamp" },
+    "updatedAt": { "$ref": "#/definitions/Timestamp" }
+  },
+  "required": [
+    "title",
+    "content",
+    "userId",
+    "isDeleted",
+    "createdAt",
+    "updatedAt"
+  ]
+}

@@ -1,0 +1,110 @@
+<ng-container *ngIf="{ user: user$ | async, mb: mb$ | async } as data">
+  <p-toolbar>
+    <div class="p-d-flex p-jc-between wrapper">
+      <div class="p-toolbar-group-left">
+        <button
+          routerLink="/"
+          title="Home"
+          pButton
+          type="button"
+          aria-label="Home"
+          icon="pi pi-home"
+          class="p-button-text p-button-plain p-button-rounded p-button-lg"
+        ></button>
+      </div>
+      <div class="p-toolbar-group-right">
+        <ng-container *ngIf="data.mb; else elseTemplate">
+          <ng-container
+            *ngTemplateOutlet="menuTemplate; context: { $implicit: data.mb }"
+          ></ng-container>
+        </ng-container>
+
+        <ng-template #elseTemplate>
+          <button
+            class="p-button-text p-button-plain p-button-rounded p-button-lg"
+            type="button"
+            pButton
+            icon="pi pi-list"
+            area-label="Show Menu"
+            (click)="displaySidebar = true"
+          ></button>
+        </ng-template>
+      </div>
+    </div>
+    <p-progressBar
+      *ngIf="loading$ | async"
+      class="custom"
+      mode="indeterminate"
+    ></p-progressBar>
+  </p-toolbar>
+
+  <p-sidebar
+    *ngIf="!data.mb"
+    class="overflow-auto flex-column-reverse"
+    [(visible)]="displaySidebar"
+    [blockScroll]="true"
+    position="right"
+  >
+    <ng-container
+      *ngTemplateOutlet="menuTemplate; context: { $implicit: data.mb }"
+    ></ng-container>
+  </p-sidebar>
+
+  <ng-template #menuTemplate let-mb>
+    <p-megaMenu
+      class="megaMenu-rsp"
+      [ngClass]="{ 'p-mr-2': mb }"
+      [orientation]="mb ? 'horizontal' : 'vertical'"
+      [model]="megaMenuItems"
+    ></p-megaMenu>
+    <app-button
+      *ngIf="!data.user?.uid; else profileTemplate"
+      [ngClass]="{ 'p-as-start p-mb-2': !mb }"
+      styleClass="p-button-success"
+      label="Login"
+      icon="pi pi-sign-in"
+      routerLink="/login"
+      [isResponsive]="false"
+      (click)="displaySidebar = false"
+    ></app-button>
+    <ng-template #profileTemplate>
+      <app-button
+        [ngClass]="{ 'p-as-start p-mb-2': !mb }"
+        label="Profile"
+        icon="pi pi-user"
+        [isResponsive]="false"
+        (click)="op.toggle($event)"
+      ></app-button>
+    </ng-template>
+  </ng-template>
+
+  <p-overlayPanel
+    styleClass="profile"
+    showTransitionOptions="0ms"
+    hideTransitionOptions="0ms"
+    appendTo="body"
+    #op
+  >
+    <ng-template pTemplate>
+      <p-card [subheader]="data.user!.displayName">
+        <p-header class="embed-rsp embed-rsp-1x1 p-d-block">
+          <img
+            class="embed-rsp-item"
+            [attr.src]="data.user?.photoURL"
+            [attr.alt]="'Photo of' + data.user?.displayName"
+          />
+        </p-header>
+        {{ data.user?.email }}
+        <p-footer>
+          <app-button
+            styleClass="p-button-danger"
+            label="Logout"
+            icon="pi pi-sign-out"
+            [isResponsive]="false"
+            (click)="logout(op)"
+          ></app-button>
+        </p-footer>
+      </p-card>
+    </ng-template>
+  </p-overlayPanel>
+</ng-container>

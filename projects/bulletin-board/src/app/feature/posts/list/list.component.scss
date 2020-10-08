@@ -1,0 +1,55 @@
+.loading-text {
+  display: block;
+  background-color: #f1f1f1;
+  min-height: 19px;
+  animation: pulse 1s infinite ease-in-out;
+  text-indent: -99999px;
+  overflow: hidden;
+}
+
+.rowHeight {
+  height: 37px;
+}
+
+.rainbow {
+  animation: rainbow 1s linear;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: hsla(0, 0%, 64.7%, 0.1);
+  }
+  50% {
+    background-color: hsla(0, 0%, 64.7%, 0.3);
+  }
+  to {
+    background-color: hsla(0, 0%, 64.7%, 0.1);
+  }
+}
+
+@keyframes rainbow {
+  0% {
+    background: hsl(0, 100%, 50%);
+  }
+  15% {
+    background: hsl(51, 100%, 50%);
+  }
+  29% {
+    background: hsl(103, 100%, 50%);
+  }
+  43% {
+    background: hsl(154, 100%, 50%);
+  }
+  57% {
+    background: hsl(206, 100%, 50%);
+  }
+  71% {
+    background: hsl(257, 100%, 50%);
+  }
+  85% {
+    background: hsl(309, 100%, 50%);
+  }
+  100% {
+    background: hsl(0, 100%, 50%);
+  }
+}

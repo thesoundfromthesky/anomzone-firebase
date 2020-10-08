@@ -1,0 +1,21 @@
+p-megaMenu.megaMenu-rsp {
+  > .p-megamenu {
+    padding: 0;
+  }
+  .p-megamenu-panel {
+    right: 0;
+    position: static;
+    @media only screen and (min-width: $lg) {
+      flex-direction: row;
+      position: absolute;
+    }
+
+    > .p-megamenu-grid {
+      flex-direction: column;
+      overflow: hidden;
+      @media only screen and (min-width: $lg) {
+        flex-direction: row;
+      }
+    }
+  }
+}

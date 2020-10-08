@@ -1,0 +1,64 @@
+<ng-container
+  *ngIf="{
+    valueChanges: valueChanges$ | async
+  } as data"
+>
+  <p-card [id]="id" class="card-flex" header="Edit a comment">
+    <form [formGroup]="commentsForm" class="p-fluid p-input-filled">
+      <div class="p-field p-d-flex p-flex-column">
+        <label class="required" for="content">Content</label>
+        <textarea
+          rows="5"
+          cols="30"
+          [autoResize]="true"
+          pInputTextarea
+          appControl
+          [validators]="commentsValidators"
+          id="content"
+          formControlName="content"
+        ></textarea>
+        <small id="content-help">{{
+          (getFormValue("content")?.length || 0) +
+            " / " +
+            commentsValidators.content.maxlength
+        }}</small>
+        <form-errors
+          [form]="commentsForm"
+          control="content"
+          [value]="getFormValue('content')"
+        ></form-errors>
+      </div>
+    </form>
+
+    <p-footer class="p-jc-end">
+      <app-button
+        styleClass="p-button-danger p-mr-2"
+        label="Hide"
+        icon="pi pi-times"
+        [loading]="true"
+        [cb]="onDelete.bind(this)"
+      ></app-button>
+      <app-button
+        styleClass="p-button-danger p-mr-2"
+        label="Reset"
+        icon="pi pi-refresh"
+        [cb]="onReset.bind(this)"
+      ></app-button>
+      <app-button
+        styleClass="p-button-success"
+        label="Update"
+        icon="pi pi-pencil"
+        [delay]="true"
+        [loading]="true"
+        [invalid]="commentsForm.invalid"
+        [isUnchanged]="isUnchanged"
+        [cb]="onSubmit.bind(this)"
+      ></app-button>
+    </p-footer>
+  </p-card>
+
+  <p-confirmDialog
+    header="Confirmation"
+    icon="pi pi-exclamation-triangle"
+  ></p-confirmDialog>
+</ng-container>

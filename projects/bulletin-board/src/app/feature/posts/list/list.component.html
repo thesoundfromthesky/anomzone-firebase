@@ -1,0 +1,159 @@
+<ng-container
+  *ngIf="{
+    mb: mb$ | async,
+    loading: loading$ | async,
+    router: router$ | async
+  } as data"
+>
+  <ng-container *ngIf="posts$ | async as posts">
+    <p-table
+      #tt
+      [ngClass]="{ 'pointer-none': data.loading }"
+      styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+      dataKey="id"
+      [responsive]="true"
+      [rowTrackBy]="trackByFn"
+      [columns]="cols"
+      [rows]="rows"
+      [value]="posts.data"
+      [scrollable]="true"
+      scrollHeight="flex"
+      [virtualScroll]="true"
+      [virtualRowHeight]="data.mb ? 37 : 97"
+      [lazy]="true"
+      [loading]="data.loading || false"
+      (onLazyLoad)="tableInit(tt)"
+      [totalRecords]="tt.value.length"
+      [rowHover]="true"
+    >
+      <!-- Colgroup -->
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup *ngIf="data.mb">
+          <col *ngFor="let col of columns" [style.width]="col.width" />
+        </colgroup>
+      </ng-template>
+
+      <!-- Caption -->
+      <ng-template pTemplate="caption">
+        <div class="p-text-capitalize">Zone: {{ relativeParentPath }}</div>
+        <div>
+          <a [routerLink]="[absoluteParentPath, 'write']">
+            <app-button
+              styleClass="p-button-success p-button-sm"
+              label="New"
+              icon="pi pi-plus"
+              [delay]="true"
+              [loading]="true"
+            >
+            </app-button>
+          </a>
+        </div>
+      </ng-template>
+
+      <!-- Header -->
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{ col.header }}
+          </th>
+        </tr>
+      </ng-template>
+
+      <!-- Body -->
+      <ng-template
+        pTemplate="body"
+        let-rowData
+        let-columns="columns"
+        let-rowIndex="rowIndex"
+      >
+        <tr
+          class="rowHeight cursor-pointer rainbow"
+          [routerLink]="[absoluteParentPath, rowData.id]"
+          [state]="{ rowIndex: rowIndex }"
+          routerLinkActive="active-link"
+        >
+          <td
+            *ngFor="let col of columns"
+            [ngSwitch]="col.field"
+            class="p-text-nowrap p-text-truncate"
+          >
+            <span *ngIf="!data.mb" class="p-column-title">{{
+              col.header
+            }}</span>
+            <ng-container *ngSwitchCase="'title'">
+              {{ rowData[col.field] }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'createdAt'">
+              {{ rowData[col.field].toDate() | date: "h:mm:ss a, MMM d, y" }}
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{ rowData[col.field] }}
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- Loading -->
+      <ng-template pTemplate="loadingbody" let-columns="columns">
+        <tr class="rowHeight">
+          <td *ngFor="let col of columns">
+            <div class="loading-text"></div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+          <td [attr.colspan]="columns.length">No records found</td>
+        </tr>
+      </ng-template>
+
+      <!-- Summary -->
+      <ng-template pTemplate="summary">
+        <div>
+          In total there are
+          {{
+            posts.isEnd ? tt.totalRecords : "+" + (tt.totalRecords - tt.rows)
+          }}
+          posts.
+        </div>
+
+        <div>
+          <app-button
+            *ngIf="posts.isEnd"
+            styleClass="p-button-warning p-button-sm p-mr-2"
+            label="The End"
+            icon="pi pi-exclamation-triangle"
+          ></app-button>
+          <app-button
+            styleClass="p-button-danger p-button-sm p-mr-2"
+            label="Reset"
+            icon="pi pi-refresh"
+            [delay]="true"
+            [loading]="true"
+            [cb]="reset.bind(this)"
+          ></app-button>
+          <ng-container *ngIf="!isEnough; else enoughTemplate">
+            <app-button
+              styleClass="p-button-sm"
+              label="View More"
+              icon="pi pi-ellipsis-h"
+              [loading]="true"
+              [isEnd]="posts.isEnd"
+              [cb]="loadData.bind(this)"
+            ></app-button>
+          </ng-container>
+          <ng-template #enoughTemplate>
+            <app-button
+              styleClass="p-button-info p-button-sm"
+              label="Back to Top"
+              icon="pi pi-angle-double-up"
+              [loading]="true"
+              [cb]="backToTop.bind(this)"
+            ></app-button>
+          </ng-template>
+        </div>
+      </ng-template>
+    </p-table>
+  </ng-container>
+</ng-container>

@@ -1,0 +1,21 @@
+p-editor {
+  @extend .flex-1;
+  display: flex;
+  flex-direction: column;
+
+  .p-editor-container {
+    @extend .flex-1;
+    display: flex;
+    flex-direction: column;
+
+    .p-editor-content {
+      @extend .flex-1;
+      display: flex;
+      flex-direction: column;
+
+      .ql-editor {
+        @extend .flex-1;
+      }
+    }
+  }
+}

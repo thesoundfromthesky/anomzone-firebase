@@ -1,0 +1,24 @@
+{
+  "forms": {
+    "posts": {
+      "validators": {
+        "title": { "maxlength": 60, "required": true },
+        "content": { "maxlength": 1024, "required": true }
+      },
+      "defaults": {
+        "title": "",
+        "content": ""
+      },
+      "batchSize": 10
+    },
+    "comments": {
+      "validators": {
+        "content": { "maxlength": 1024, "required": true }
+      },
+      "defaults": {
+        "content": ""
+      },
+      "batchSize": 5
+    }
+  }
+}

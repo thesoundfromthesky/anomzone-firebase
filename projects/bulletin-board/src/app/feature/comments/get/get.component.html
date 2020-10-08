@@ -1,0 +1,65 @@
+<ng-container *ngIf="comment.isVisible; else deletedTemplate">
+  <p-card [id]="comment.id" class="card-flex card-comment p-mb-2" [header]="comment.userId"
+    [subheader]="parent ? '@' + parent : ''">
+    <div class="text-content">
+      {{ comment.content }}
+    </div>
+    <p-footer class="p-flex-column p-ai-end">
+      <div>
+        <div>
+          Created at:
+          {{comment.createdAt.toDate() | date: "h:mm:ss a, MMM d, y" }}
+        </div>
+        <div>
+          Updated at:
+          {{comment.updatedAt.toDate() | date: "h:mm:ss a, MMM d, y" }}
+        </div>
+      </div>
+      <div>
+        <div class="p-mt-2 p-text-right">
+          <app-button *ngIf="isOwner(comment.userId)" [styleClass]="[
+              showEdit ? 'p-button-help' : 'p-button-info',
+              'p-mr-2'
+            ]" [label]="showEdit ? 'Close' : 'Edit'" [icon]="showEdit ? 'pi pi-minus' : 'pi pi-pencil'"
+            [cb]="toggleEdit.bind(this)"></app-button>
+          <app-button [styleClass]="showReply ? 'p-button-help' : ''" [label]="showReply ? 'Close' : 'Reply'"
+            [icon]="showReply ? 'pi pi-minus' : 'pi pi-reply'" [cb]="toggleShowReply.bind(this)"></app-button>
+        </div>
+      </div>
+    </p-footer>
+  </p-card>
+
+  <comments-update *ngIf="showEdit" appAnchorScroll [id]="comment.id + '/edit'" class="p-d-block p-mb-2"
+    [path]="comment.path" [parentPath]="path" [rootPath]="rootPath" [comment]="comment" (toggleEdit)="toggleEdit()">
+  </comments-update>
+
+  <comments-create *ngIf="showReply" appAnchorScroll [id]="comment.id + '/reply'" class="p-d-block p-mb-2"
+    [path]="comment.path" [rootPath]="rootPath" [header]="'Reply to ' + comment.userId"
+    (toggleShowReply)="toggleShowReply()"></comments-create>
+</ng-container>
+
+<ng-template #deletedTemplate>
+  <p-card [id]="comment.id" class="card-flex p-mb-2" header="A hidden comment">
+    <div class="text-content">A hidden comment</div>
+  </p-card>
+</ng-template>
+
+<ng-container *ngIf="comments$ | async as comments">
+  <ng-container *ngIf="comments.data.length">
+    <ng-container *ngIf="layer == 0 || layer % 3 != 0 || canContinue; else continueTemplate">
+      <comments-list [ngClass]="{ 'p-d-block p-ml-5': layer < 4 }" [parent]="comment.userId" [path]="comment.path"
+        [comments]="comments.data" [rootPath]="rootPath" [layer]="layer + 1"></comments-list>
+      <div class="p-text-right p-mt-2 p-mb-2">
+        <ng-container *ngIf="comments.data.length">
+          <app-button *ngIf="!comments.isEnd" label="View More" icon="pi pi-ellipsis-h" [loading]="true"
+            [cb]="loadData.bind(this)"></app-button>
+        </ng-container>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-template #continueTemplate>
+    <div class="p-text-right p-mt-2 p-mb-2">
+      <app-button label="Continue" icon="pi pi-ellipsis-h" [loading]="true" [cb]="continue.bind(this)"></app-button>
+    </div>
+  </ng-template>
+</ng-container>

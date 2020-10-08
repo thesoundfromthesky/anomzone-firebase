@@ -1,0 +1,39 @@
+<ng-container
+  *ngIf="{
+    paramMap: paramMap$ | async
+  } as data"
+>
+  <ng-container *ngIf="comments$ | async as comments">
+    <comments-create
+      class="p-d-block p-mt-2 p-mb-2"
+      [path]="path"
+      [rootPath]="rootPath"
+      header="Write a comment"
+    ></comments-create>
+    <comments-list
+      [layer]="0"
+      [path]="path"
+      [rootPath]="rootPath"
+      [comments]="comments.data"
+    ></comments-list>
+    <div class="p-text-right p-mt-2 p-mb-2">
+      <ng-container *ngIf="comments && comments.data.length">
+        <app-button
+          styleClass="p-button-danger p-mr-2"
+          label="Reset"
+          icon="pi pi-refresh"
+          [delay]="true"
+          [loading]="true"
+          [cb]="reset.bind(this)"
+        ></app-button>
+        <app-button
+          *ngIf="!comments.isEnd"
+          label="View More"
+          icon="pi pi-ellipsis-h"
+          [loading]="true"
+          [cb]="loadData.bind(this)"
+        ></app-button>
+      </ng-container>
+    </div>
+  </ng-container>
+</ng-container>

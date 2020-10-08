@@ -1,0 +1,13 @@
+<div *ngIf="router$ | async; else layoutTemplate" class="expand">
+  <div class="lds-hourglass"></div>
+</div>
+
+<ng-template #layoutTemplate>
+  <layout-topbar></layout-topbar>
+
+  <layout-content></layout-content>
+
+  <layout-footer></layout-footer>
+</ng-template>
+
+<p-toast position="bottom-right"></p-toast>

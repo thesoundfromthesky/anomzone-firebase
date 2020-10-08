@@ -1,0 +1,25 @@
+{
+  "projects": {
+    "staging": "anomzone-staging",
+    "prod": "anomzone-dev"
+  },
+  "targets": {
+    "anomzone-staging": {
+      "hosting": {
+        "emu": [
+          "anomzone-staging"
+        ],
+        "staging": [
+          "anomzone-staging"
+        ]
+      }
+    },
+    "anomzone-dev": {
+      "hosting": {
+        "prod": [
+          "anomzone-dev"
+        ]
+      }
+    }
+  }
+}

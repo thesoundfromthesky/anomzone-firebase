@@ -1,0 +1,16 @@
+<p-message
+  *ngIf="isInvalid('required', control)"
+  severity="error"
+  [text]="control + ' is required.'"
+></p-message>
+<p-message
+  *ngIf="isInvalid('maxlength', control) as maxlength"
+  severity="error"
+  [text]="
+    'Current length:' +
+    maxlength.actualLength +
+    ' is greater than maximum length:' +
+    maxlength.requiredLength +
+    '.'
+  "
+></p-message>

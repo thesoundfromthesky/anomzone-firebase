@@ -1,14 +1,24 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+*.log
+bulletin-board-398ae-7a8766a788e0.json
+
+credentials/
+.firebase/
+.vscode/
+
 # compiled output
+lib/
 /dist
 /tmp
 /out-tsc
 # Only exists if Bazel was run
 /bazel-out
+firestore_export/
 
 # dependencies
 /node_modules
+node_modules/
 
 # profiling files
 chrome-profiler-events*.json
